@@ -36,12 +36,15 @@ class Renderer extends Manager {
     }
 
     public async Run() {
-        // this.ListenEvents();
+        this.ListenEvents();
     }
 
     private ListenEvents() {
         this.Event.Listen<Record<string, unknown>>(this.Event.TauriEvent.TAURI, async (e) => {
             const r = e.payload;
+            if (r.event === this.RendererEvent.Empty) {
+                this.Emit(this.RendererEvent.Empty, r);
+            }
             this.Emit(this.RendererEvent.Message, r);
         });
     }

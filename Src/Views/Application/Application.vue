@@ -12,7 +12,7 @@ instance.Run();
 </script>
 
 <template>
-    <div class="Application"><h1 :style="{ color: '#ff0000' }">AAAA</h1></div>
+    <div class="Application"></div>
 </template>
 
 <style lang="scss" scoped>

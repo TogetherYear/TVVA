@@ -1,5 +1,7 @@
 import { onMounted, onUnmounted } from 'vue';
 import { Component } from '@/Libs/Component';
+import { TTest } from '@/Decorators/TTest';
+import { Renderer } from '@/Plugins/Renderer';
 
 class Application extends Component {
     public constructor() {
@@ -19,6 +21,12 @@ class Application extends Component {
     }
 
     protected Destroy() {}
+
+    @TTest.BindFunction('Test')
+    private async Test() {
+        const result = (await Renderer.App.Invoke('GetTestInfo')) as string;
+        console.log(result);
+    }
 }
 
 export { Application };
