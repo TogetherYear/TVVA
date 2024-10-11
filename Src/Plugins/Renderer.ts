@@ -1,4 +1,3 @@
-import { getName } from '@tauri-apps/api/app';
 import { Manager } from '@/Libs/Manager';
 import * as Tauri from '@tauri-apps/api';
 import { TEvent } from '@/Decorators/TEvent';
@@ -7,9 +6,6 @@ import { TEvent } from '@/Decorators/TEvent';
 class Renderer extends Manager {
     public get App() {
         return {
-            GetName: () => {
-                return getName();
-            },
             Invoke: (cmd: string, args?: Tauri.core.InvokeArgs) => {
                 return Tauri.core.invoke(cmd, args);
             }
