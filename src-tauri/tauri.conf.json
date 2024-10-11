@@ -1,0 +1,47 @@
+{
+    "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+    "productName": "Application",
+    "version": "0.1.0",
+    "identifier": "com.tauri.build",
+    "build": {
+        "frontendDist": "../Dist",
+        "devUrl": "http://192.168.0.20:14200",
+        "beforeDevCommand": "npm run dev",
+        "beforeBuildCommand": "npm run build"
+    },
+    "app": {
+        "windows": [
+            {
+                "width": 1000,
+                "height": 560,
+                "resizable": true,
+                "center": true,
+                "title": "Application",
+                "decorations": false,
+                "focus": true,
+                "label": "Application",
+                "transparent": true,
+                "url": "/#/Application",
+                "visible": true
+            }
+        ],
+        "security": {
+            "csp": null,
+            "assetProtocol": {
+                "enable": true,
+                "scope": ["**"]
+            }
+        }
+    },
+    "bundle": {
+        "active": true,
+        "targets": "all",
+        "icon": [
+            "icons/32x32.png",
+            "icons/128x128.png",
+            "icons/128x128@2x.png",
+            "icons/icon.icns",
+            "icons/icon.ico"
+        ]
+    }
+}

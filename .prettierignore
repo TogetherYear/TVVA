@@ -1,0 +1,5 @@
+src-tauri
+Dist
+Public
+auto-imports.d.ts
+components.d.ts
