@@ -4,7 +4,7 @@
         <!-- Customize your theme here. -->
         <!-- FIXME:设置顶部状态栏颜色 -->
         <item name="android:statusBarColor">@color/statusBarColor</item>
-        <!--FIXME:底部导航栏颜色-->
+        <!-- FIXME:底部导航栏颜色 -->
         <item name="android:navigationBarColor">@color/navigationBarColor</item>
     </style>
 </resources>
