@@ -8,7 +8,7 @@
 
 ```
 用真机调试
-1：最好先把 src-tauri/gen 这个文件夹删除
+1：最好先把 src-tauri/gen 这个文件夹删除 其中的 build.gradle.kts 这个文件有更改 需撤回
 2：tauri.conf.json 的 devUrl 改成你本地的
 3：打包 需要自己弄签名 在 src-tauri/gen/android 创建 key.properties 文件 写入如下 ( 替换成你自己的 )
 
