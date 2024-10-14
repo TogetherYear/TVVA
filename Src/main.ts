@@ -6,9 +6,10 @@ import { router } from './Router';
 
 import E from 'eruda';
 
-E.init({ tool: ['console'] });
+E.init({ tool: ['console', 'elements'] });
 
 import { Renderer } from './Plugins/Renderer';
+
 await Renderer.Run();
 
 createApp(RootVue).use(router).mount('#App');

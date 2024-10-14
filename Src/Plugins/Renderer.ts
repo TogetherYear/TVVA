@@ -1,6 +1,6 @@
 import { Manager } from '@/Libs/Manager';
-import * as Tauri from '@tauri-apps/api';
 import { TEvent } from '@/Decorators/TEvent';
+import * as Tauri from '@tauri-apps/api';
 
 @TEvent.Create(['Message', 'Empty'])
 class Renderer extends Manager {
