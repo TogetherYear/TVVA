@@ -7,7 +7,11 @@
 ```
 
 ```
-用真机调试
+一些基本环境 比如 Android Studio Java17 SDK...... 自己去配置并且弄环境变量
+```
+
+```
+用真机调试 ( 模拟器会导致页面显示不了 ) 手机和电脑处于用一个网络中
 1：最好先把 src-tauri/gen 这个文件夹删除 其中的 build.gradle.kts 这个文件有更改 需撤回
 2：tauri.conf.json 的 devUrl 改成你本地的
 3：打包 需要自己弄签名 在 src-tauri/gen/android 创建 key.properties 文件 写入如下 ( 替换成你自己的 )
