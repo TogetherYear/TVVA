@@ -60,7 +60,7 @@ export default defineConfig(({ command, mode }) => {
         root: path.join(__dirname, ''),
         publicDir: 'Public',
         server: {
-            port: 14200,
+            port: 6768,
             host: '0.0.0.0',
             strictPort: true
         }

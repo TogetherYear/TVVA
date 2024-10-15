@@ -22,6 +22,11 @@ class Application extends Component {
 
     protected Destroy() {}
 
+    @TTest.BindFunction('Reload')
+    private Reload() {
+        location.reload();
+    }
+
     @TTest.BindFunction('Test')
     private async Test() {
         const result = (await Renderer.App.Invoke('GetTestInfo')) as string;
