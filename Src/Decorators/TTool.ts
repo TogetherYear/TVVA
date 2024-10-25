@@ -82,6 +82,7 @@ namespace TTool {
                                     typeof e.delta === 'function' ? e.delta(this) : e.delta
                                 );
                             }
+                            //@ts-ignore
                             debounceMap.set(key, timer);
                         };
                     }
