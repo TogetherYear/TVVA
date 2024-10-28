@@ -1,9 +1,10 @@
 import { Mathf } from '@/Utils/Mathf';
-import { isRef, onMounted, onUnmounted, watch } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Resolve } from './index';
 import { TEvent } from './TEvent';
 import { Entity } from '@/Libs/Entity';
+import { Time } from '@/Utils/Time';
 
 namespace TTool {
     /**
@@ -31,6 +32,7 @@ namespace TTool {
                     super(...args);
                     this.TTool_Generate_Debounce();
                     this.TTool_Generate_Throttle();
+                    this.TTool_Generaye_Retry();
                     this.TTool_Generate_MountRange();
                     this.TTool_Generate_MountLength();
                     this.TTool_Generate_MountWatch();
@@ -113,6 +115,51 @@ namespace TTool {
                                 original(...args);
                             }
                             throttleMap.set(key, lastTime);
+                        };
+                    }
+                }
+
+                private TTool_Generaye_Retry() {
+                    //@ts-ignore
+                    const retry = (this['tTool_Retry_Need'] || []) as Array<{
+                        retryCount: number | ((instance: Object) => number);
+                        retryDelay: number | ((instance: Object) => number);
+                        PassRetryCondition: (data: Record<string, unknown>) => boolean;
+                        propertyKey: string;
+                    }>;
+
+                    for (let r of retry) {
+                        //@ts-ignore
+                        const original: (...args: Array<unknown>) => Promise<Record<string, unknown>> = this[`${r.propertyKey}`].bind(this);
+                        const temp = (...args: Array<unknown>): Promise<{ type: 'Success' | 'Error'; data: Record<string, unknown> }> => {
+                            return new Promise((resolve, reject) => {
+                                original(...args)
+                                    .then((res) => {
+                                        resolve({ type: 'Success', data: res });
+                                    })
+                                    .catch((err) => {
+                                        resolve({ type: 'Error', data: err });
+                                    });
+                            });
+                        };
+
+                        //@ts-ignore
+                        this[`${r.propertyKey}`] = function (...args: Array<unknown>) {
+                            return new Promise(async (resolve, reject) => {
+                                const count = typeof r.retryCount === 'function' ? r.retryCount(this) : r.retryCount;
+                                for (let i = 0; i < count; ++i) {
+                                    const result = await temp(...args);
+                                    if (i === count - 1) {
+                                        result.type === 'Success' ? resolve(result.data) : reject(result.data);
+                                        break;
+                                    }
+                                    if (result.type === 'Success' && r.PassRetryCondition(result.data)) {
+                                        resolve(result.data);
+                                        break;
+                                    }
+                                    await Time.Sleep(typeof r.retryDelay === 'function' ? r.retryDelay(this) : r.retryDelay);
+                                }
+                            });
                         };
                     }
                 }
@@ -422,6 +469,26 @@ namespace TTool {
             } else {
                 //@ts-ignore
                 target['tTool_Watch_Need'] = [{ Callback, deep, immediate, propertyKey }];
+            }
+        };
+    }
+
+    /**
+     * 重复执行函数 必须是返回 Promise 的函数签名
+     */
+    export function Retry<T extends Entity>(
+        retryCount: number | ((instance: T) => number),
+        retryDelay: number | ((instance: T) => number),
+        PassRetryCondition: (data: Record<string, unknown> | undefined | any) => boolean
+    ) {
+        return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+            //@ts-ignore
+            if (target['tTool_Retry_Need']) {
+                //@ts-ignore
+                target['tTool_Retry_Need'].push({ retryCount, retryDelay, PassRetryCondition, propertyKey });
+            } else {
+                //@ts-ignore
+                target['tTool_Retry_Need'] = [{ retryCount, retryDelay, PassRetryCondition, propertyKey }];
             }
         };
     }
