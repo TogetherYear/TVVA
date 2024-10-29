@@ -1,7 +1,7 @@
 import { Manager } from '@/Libs/Manager';
 
 namespace TManager {
-    export const Manager: Array<Manager> = [];
+    export const manager: Array<Manager> = [];
 
     export function Generate() {
         return function <T extends new (...args: Array<any>) => Manager>(C: T) {
@@ -13,14 +13,14 @@ namespace TManager {
                 }
 
                 private TManager_Generate_Hooks() {
-                    Manager.push(this);
+                    manager.push(this);
                 }
 
                 private Mount() {
                     //@ts-ignore
-                    if (!window.Manager) {
+                    if (!window.manager) {
                         //@ts-ignore
-                        window.Manager = Manager;
+                        window.manager = manager;
                     }
                 }
             };

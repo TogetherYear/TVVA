@@ -3,7 +3,7 @@ import { onMounted, onUnmounted } from 'vue';
 import { TRouter } from './TRouter';
 
 namespace TComponent {
-    export const ComponentMap = new Map<string, Array<Component>>();
+    export const componentMap = new Map<string, Array<Component>>();
 
     export function Generate() {
         return function <T extends new (...args: Array<any>) => Component>(C: T) {
@@ -16,16 +16,16 @@ namespace TComponent {
 
                 private TComponent_Generate_Hooks() {
                     onMounted(() => {
-                        let currentMap = ComponentMap.get(this.Route);
+                        let currentMap = componentMap.get(this.Route);
                         if (!currentMap) {
                             currentMap = [];
-                            ComponentMap.set(this.Route, currentMap);
+                            componentMap.set(this.Route, currentMap);
                         }
                         currentMap.push(this);
                     });
 
                     onUnmounted(() => {
-                        let currentMap = ComponentMap.get(TRouter.lastPath.value);
+                        let currentMap = componentMap.get(TRouter.lastPath.value);
                         if (currentMap) {
                             const index = currentMap.findIndex((c) => c === this);
                             if (index !== -1) {
@@ -37,9 +37,9 @@ namespace TComponent {
 
                 private Mount() {
                     //@ts-ignore
-                    if (!window.ComponentMap) {
+                    if (!window.componentMap) {
                         //@ts-ignore
-                        window.ComponentMap = ComponentMap;
+                        window.componentMap = componentMap;
                     }
                 }
             };
