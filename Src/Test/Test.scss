@@ -1,7 +1,7 @@
 .Test {
     position: fixed;
-    max-width: 300px;
     height: min-content;
+    max-width: 300px;
     right: 5px;
     bottom: 5px;
     background-color: #21212133;
@@ -9,10 +9,31 @@
     border-radius: 2px;
     padding-bottom: 10px;
     padding-right: 10px;
+    .Memory {
+        .Item {
+            position: relative;
+            display: block;
+            white-space: nowrap;
+            width: min-content;
+            line-height: 24px;
+            padding-left: 5px;
+            padding-right: 5px;
+            color: #ffffff;
+            font-size: 13px;
+            background: #355a8baa;
+            margin-left: 10px;
+            margin-top: 10px;
+            border-radius: 2px;
+            cursor: pointer;
+            word-break: break-all;
+        }
+    }
     .FunctionItem {
         position: relative;
         display: inline-block;
-        min-height: min-content;
+        white-space: nowrap;
+        width: min-content;
+        height: 24px;
         line-height: 24px;
         padding-left: 5px;
         padding-right: 5px;
@@ -32,7 +53,9 @@
     .PropertyItem {
         position: relative;
         display: inline-block;
-        min-height: min-content;
+        white-space: nowrap;
+        width: min-content;
+        height: 24px;
         line-height: 24px;
         padding-left: 5px;
         padding-right: 5px;

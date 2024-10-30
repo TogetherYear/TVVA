@@ -1,4 +1,4 @@
-import { onUnmounted, ref, Ref, Reactive } from 'vue';
+import { onUnmounted, ref, Ref, Reactive, reactive, toRaw } from 'vue';
 import { TEvent } from './TEvent';
 import { Resolve } from './index';
 import { Entity } from '@/Libs/Entity';
@@ -13,6 +13,15 @@ namespace TTest {
      * 属性列表
      */
     export const propertyMap = ref<Map<string, { label: string; property: Ref<unknown> | Reactive<Record<string, unknown>> }>>(new Map());
+
+    /**
+     * 内存使用量
+     */
+    export const memory = reactive<{
+        jsHeapSizeLimit: number;
+        totalJSHeapSize: number;
+        usedJSHeapSize: number;
+    }>({ jsHeapSizeLimit: 0, totalJSHeapSize: 0, usedJSHeapSize: 0 });
 
     /**
      * 测试生成
@@ -149,6 +158,32 @@ namespace TTest {
                 ];
             }
         };
+    }
+
+    export function EmitTest(e: { label: string; scope: Object; funcName: string; args: Array<unknown> }) {
+        const r = toRaw(e);
+        const args = r.args.map((a) => {
+            if (typeof a === 'function') {
+                return a(r.scope);
+            } else {
+                return a;
+            }
+        });
+        //@ts-ignore
+        r.scope[`${r.funcName}`](...args);
+    }
+
+    export function WatchMemory() {
+        if (typeof performance !== 'undefined' && 'memory' in performance) {
+            setInterval(() => {
+                //@ts-ignore
+                memory.jsHeapSizeLimit = (performance.memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2);
+                //@ts-ignore
+                memory.usedJSHeapSize = (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2);
+                //@ts-ignore
+                memory.totalJSHeapSize = (performance.memory.totalJSHeapSize / 1024 / 1024).toFixed(2);
+            }, 1000);
+        }
     }
 }
 export { TTest };
