@@ -39,6 +39,8 @@ namespace TTool {
                     //@ts-ignore
                     if (this['tEvent_Generate_Type'] === TEvent.Lifecycle.Temporary) {
                         this.TTool_Generate_Hooks();
+                    } else {
+                        this.TTool_Generate_Interval();
                     }
                 }
 
@@ -47,6 +49,8 @@ namespace TTool {
                 private tTool_Generate_Length: Array<() => void> = [];
 
                 private tTool_Generate_Watch: Array<() => void> = [];
+
+                private tTool_Generate_Interval: Array<number> = [];
 
                 private tTool_Generate_Observers = new Map<HTMLElement, IntersectionObserver>();
 
@@ -164,15 +168,49 @@ namespace TTool {
                     }
                 }
 
+                private TTool_Generate_Interval() {
+                    Resolve.then(() => {
+                        //@ts-ignore
+                        const interval = (this['tTool_Interval_Need'] || []) as Array<{
+                            propertyKey: string;
+                            condition: boolean | ((instance: Object) => boolean);
+                            time: number | ((instance: Object) => number);
+                        }>;
+
+                        for (let i of interval) {
+                            //@ts-ignore
+                            const original = this[`${i.propertyKey}`].bind(this);
+
+                            const timer = setInterval(
+                                () => {
+                                    if (typeof i.condition === 'function' ? i.condition(this) : i.condition) {
+                                        original();
+                                    }
+                                },
+                                typeof i.time === 'function' ? i.time(this) : i.time
+                            );
+                            //@ts-ignore
+                            this.tTool_Generate_Interval.push(timer);
+
+                            //@ts-ignore
+                            this[`${i.propertyKey}`] = function (...args: Array<unknown>) {
+                                original(...args);
+                            };
+                        }
+                    });
+                }
+
                 private TTool_Generate_Hooks() {
                     onMounted(() => {
                         this.TTool_Generate_CreateListen();
+                        this.TTool_Generate_Interval();
                     });
 
                     onUnmounted(() => {
                         this.TTool_Generate_UnMountRange();
                         this.TTool_Generate_UnMountLength();
                         this.TTool_Generate_UnMountWatch();
+                        this.TTool_Generate_UnMountInterval();
                         this.TTool_Generate_DestroyListen();
                     });
                 }
@@ -261,6 +299,12 @@ namespace TTool {
                 private TTool_Generate_UnMountWatch() {
                     for (let StopHandle of this.tTool_Generate_Watch) {
                         StopHandle();
+                    }
+                }
+
+                private TTool_Generate_UnMountInterval() {
+                    for (let i of this.tTool_Generate_Interval) {
+                        clearInterval(i);
                     }
                 }
 
@@ -489,6 +533,23 @@ namespace TTool {
             } else {
                 //@ts-ignore
                 target['tTool_Retry_Need'] = [{ retryCount, retryDelay, PassRetryCondition, propertyKey }];
+            }
+        };
+    }
+
+    /**
+     * 自动间隔时间重复执行 Manager 在构造函数完成的下一次事件循环执行 Component 在 onMounted 后的下一次事件循环执行
+     * condition 是否执行的条件 time 每次执行间隔
+     */
+    export function Interval<T extends Entity>(condition: boolean | ((instance: T) => boolean), time: number | ((instance: T) => number)) {
+        return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+            //@ts-ignore
+            if (target['tTool_Interval_Need']) {
+                //@ts-ignore
+                target['tTool_Interval_Need'].push({ propertyKey, condition, time });
+            } else {
+                //@ts-ignore
+                target['tTool_Interval_Need'] = [{ propertyKey, condition, time }];
             }
         };
     }
