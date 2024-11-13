@@ -153,7 +153,7 @@ namespace TTool {
                                 const count = typeof r.retryCount === 'function' ? r.retryCount(this) : r.retryCount;
                                 for (let i = 0; i < count; ++i) {
                                     const result = await temp(...args);
-                                    if (i === count - 1) {
+                                    if (i === count - 1 || r.PassRetryCondition(result.data)) {
                                         result.type === 'Success' ? resolve(result.data) : reject(result.data);
                                         break;
                                     }
