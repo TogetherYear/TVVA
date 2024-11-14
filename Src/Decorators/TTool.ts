@@ -32,7 +32,7 @@ namespace TTool {
                     super(...args);
                     this.TTool_Generate_Debounce();
                     this.TTool_Generate_Throttle();
-                    this.TTool_Generaye_Retry();
+                    this.TTool_Generate_Retry();
                     this.TTool_Generate_MountRange();
                     this.TTool_Generate_MountLength();
                     this.TTool_Generate_MountWatch();
@@ -123,7 +123,7 @@ namespace TTool {
                     }
                 }
 
-                private TTool_Generaye_Retry() {
+                private TTool_Generate_Retry() {
                     //@ts-ignore
                     const retry = (this['tTool_Retry_Need'] || []) as Array<{
                         retryCount: number | ((instance: Object) => number);
