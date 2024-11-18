@@ -144,7 +144,13 @@ namespace TRouter {
      */
     let isLoad = false;
 
-    export function RefreshRoute(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
+    export function BeforeRouteHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {}
+
+    export function AfterRouteHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
+        HistoryAndQueryHandler(to, from);
+    }
+
+    export function HistoryAndQueryHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
         lastPath.value = from.path;
         currentPath.value = to.path;
         const index = routeHistory.value.findIndex((r) => r.path === to.path);

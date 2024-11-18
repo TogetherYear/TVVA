@@ -6,8 +6,12 @@ const router = createRouter({
     routes: TRouter.routes
 });
 
+router.beforeEach((to, form) => {
+    TRouter.BeforeRouteHandler(to, form);
+});
+
 router.afterEach((to, from) => {
-    TRouter.RefreshRoute(to, from);
+    TRouter.AfterRouteHandler(to, from);
 });
 
 TRouter.InitMenu(router.getRoutes());
