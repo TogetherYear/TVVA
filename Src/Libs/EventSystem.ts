@@ -1,5 +1,3 @@
-type Callback = (e: Record<string, unknown> | unknown | any) => void;
-
 class EventSystem extends Object {
     constructor() {
         super();
@@ -10,7 +8,7 @@ class EventSystem extends Object {
      */
     private continue: Array<{
         key: string;
-        callbacks: Array<{ scope: Object; callback: Callback }>;
+        callbacks: Array<{ scope: Object; callback: string }>;
     }> = [];
 
     /**
@@ -18,7 +16,7 @@ class EventSystem extends Object {
      */
     private temporary: Array<{
         key: string;
-        callbacks: Array<{ scope: Object; callback: Callback }>;
+        callbacks: Array<{ scope: Object; callback: string }>;
     }> = [];
 
     /**
@@ -26,7 +24,7 @@ class EventSystem extends Object {
      */
     public get C(): Array<{
         key: string;
-        callbacks: Array<{ scope: Object; callback: Callback }>;
+        callbacks: Array<{ scope: Object; callback: string }>;
     }> {
         return this.continue;
     }
@@ -36,7 +34,7 @@ class EventSystem extends Object {
      */
     public get T(): Array<{
         key: string;
-        callbacks: Array<{ scope: Object; callback: Callback }>;
+        callbacks: Array<{ scope: Object; callback: string }>;
     }> {
         return this.temporary;
     }
@@ -76,7 +74,7 @@ class EventSystem extends Object {
      * @param once [ false ] 是否只监听一次
      * @description 添加监听
      */
-    public AddListen(key: string, scope: Object, callback: Callback, once: boolean = false) {
+    public AddListen(key: string, scope: Object, callback: string, once: boolean = false) {
         if (once) {
             let tc = this.temporary.find((ti) => ti.key === key);
             if (tc) {
@@ -100,12 +98,12 @@ class EventSystem extends Object {
      * @param callback 执行函数
      * @description 删除监听
      */
-    public RemoveListen(key: string, scope: Object, callback: Callback) {
+    public RemoveListen(key: string, scope: Object) {
         let cc = this.continue.find((ci) => ci.key === key);
         let tc = this.temporary.find((ti) => ti.key === key);
         if (cc && tc) {
-            cc.callbacks = cc.callbacks.filter((item) => item.callback !== callback && item.scope !== scope);
-            tc.callbacks = tc.callbacks.filter((item) => item.callback !== callback && item.scope !== scope);
+            cc.callbacks = cc.callbacks.filter((item) => item.scope !== scope);
+            tc.callbacks = tc.callbacks.filter((item) => item.scope !== scope);
         } else {
             console.error('事件不存在!');
         }
@@ -122,10 +120,12 @@ class EventSystem extends Object {
         let tc = this.temporary.find((ti) => ti.key === key);
         if (cc && tc) {
             for (let c of cc.callbacks) {
-                c.callback.call(c.scope, data);
+                //@ts-ignore
+                c.scope[`${c.callback}`](data);
             }
             for (let t of tc.callbacks) {
-                t.callback.call(t.scope, data);
+                //@ts-ignore
+                t.scope[`${t.callback}`](data);
             }
             this.ClearSingleOnce(key);
         } else {
