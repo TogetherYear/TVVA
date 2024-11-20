@@ -32,14 +32,14 @@ class Entity extends EventSystem {
      * 获取当前页面所有存活的 Component
      */
     public GetAllComponent() {
-        return TComponent.ComponentMap.get(TRouter.currentPath.value);
+        return TComponent.componentMap.get(TRouter.currentPath.value);
     }
 
     /**
      * 根据条件获取 Component
      */
     public GetComponent<T>(Condition: (instance: T & Record<string, unknown>) => boolean): T | null {
-        const current = TComponent.ComponentMap.get(TRouter.currentPath.value)!;
+        const current = TComponent.componentMap.get(TRouter.currentPath.value)!;
         for (let c of current) {
             if (Condition(c as any)) {
                 return c as T;

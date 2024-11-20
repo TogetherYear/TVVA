@@ -1,5 +1,6 @@
+import { TTest } from '@/Decorators/TTest';
 import { Manager } from '@/Libs/Manager';
-import { onMounted, onUnmounted, ref, toRaw } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 class Test extends Manager {
     private isShow = ref<boolean>(true);
@@ -12,7 +13,9 @@ class Test extends Manager {
 
     public Run() {
         this.isShow.value = import.meta.env.DEV;
-        onMounted(() => {});
+        onMounted(() => {
+            TTest.WatchMemory();
+        });
 
         onUnmounted(() => {
             this.Destroy();
@@ -20,19 +23,6 @@ class Test extends Manager {
     }
 
     public Destroy() {}
-
-    public OnClickTest(e: { label: string; scope: Object; funcName: string; args: Array<unknown> }) {
-        const r = toRaw(e);
-        const args = r.args.map((a) => {
-            if (typeof a === 'function') {
-                return a(r.scope);
-            } else {
-                return a;
-            }
-        });
-        //@ts-ignore
-        r.scope[`${r.funcName}`](...args);
-    }
 }
 
 const TestInstance = new Test();

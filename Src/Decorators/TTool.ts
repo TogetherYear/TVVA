@@ -1,9 +1,10 @@
 import { Mathf } from '@/Utils/Mathf';
-import { isRef, onMounted, onUnmounted, watch } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Resolve } from './index';
 import { TEvent } from './TEvent';
 import { Entity } from '@/Libs/Entity';
+import { Time } from '@/Utils/Time';
 
 namespace TTool {
     /**
@@ -31,12 +32,15 @@ namespace TTool {
                     super(...args);
                     this.TTool_Generate_Debounce();
                     this.TTool_Generate_Throttle();
+                    this.TTool_Generate_Retry();
                     this.TTool_Generate_MountRange();
                     this.TTool_Generate_MountLength();
                     this.TTool_Generate_MountWatch();
                     //@ts-ignore
                     if (this['tEvent_Generate_Type'] === TEvent.Lifecycle.Temporary) {
                         this.TTool_Generate_Hooks();
+                    } else {
+                        this.TTool_Generate_Interval();
                     }
                 }
 
@@ -45,6 +49,8 @@ namespace TTool {
                 private tTool_Generate_Length: Array<() => void> = [];
 
                 private tTool_Generate_Watch: Array<() => void> = [];
+
+                private tTool_Generate_Interval: Array<number> = [];
 
                 private tTool_Generate_Observers = new Map<HTMLElement, IntersectionObserver>();
 
@@ -117,15 +123,94 @@ namespace TTool {
                     }
                 }
 
+                private TTool_Generate_Retry() {
+                    //@ts-ignore
+                    const retry = (this['tTool_Retry_Need'] || []) as Array<{
+                        retryCount: number | ((instance: Object) => number);
+                        retryDelay: number | ((instance: Object) => number);
+                        PassRetryCondition: (data: Record<string, unknown>) => boolean;
+                        propertyKey: string;
+                    }>;
+
+                    for (let r of retry) {
+                        //@ts-ignore
+                        const original: (...args: Array<unknown>) => Promise<Record<string, unknown>> = this[`${r.propertyKey}`].bind(this);
+                        const temp = (...args: Array<unknown>): Promise<{ type: 'Success' | 'Error'; data: Record<string, unknown> }> => {
+                            return new Promise((resolve, reject) => {
+                                original(...args)
+                                    .then((res) => {
+                                        resolve({ type: 'Success', data: res });
+                                    })
+                                    .catch((err) => {
+                                        resolve({ type: 'Error', data: err });
+                                    });
+                            });
+                        };
+
+                        //@ts-ignore
+                        this[`${r.propertyKey}`] = function (...args: Array<unknown>) {
+                            return new Promise(async (resolve, reject) => {
+                                const count = typeof r.retryCount === 'function' ? r.retryCount(this) : r.retryCount;
+                                for (let i = 0; i < count; ++i) {
+                                    const result = await temp(...args);
+                                    if (i === count - 1 || r.PassRetryCondition(result.data)) {
+                                        result.type === 'Success' ? resolve(result.data) : reject(result.data);
+                                        break;
+                                    }
+                                    if (result.type === 'Success' && r.PassRetryCondition(result.data)) {
+                                        resolve(result.data);
+                                        break;
+                                    }
+                                    await Time.Sleep(typeof r.retryDelay === 'function' ? r.retryDelay(this) : r.retryDelay);
+                                }
+                            });
+                        };
+                    }
+                }
+
+                private TTool_Generate_Interval() {
+                    Resolve.then(() => {
+                        //@ts-ignore
+                        const interval = (this['tTool_Interval_Need'] || []) as Array<{
+                            propertyKey: string;
+                            condition: boolean | ((instance: Object) => boolean);
+                            time: number | ((instance: Object) => number);
+                        }>;
+
+                        for (let i of interval) {
+                            //@ts-ignore
+                            const original = this[`${i.propertyKey}`].bind(this);
+
+                            const timer = setInterval(
+                                () => {
+                                    if (typeof i.condition === 'function' ? i.condition(this) : i.condition) {
+                                        original();
+                                    }
+                                },
+                                typeof i.time === 'function' ? i.time(this) : i.time
+                            );
+                            //@ts-ignore
+                            this.tTool_Generate_Interval.push(timer);
+
+                            //@ts-ignore
+                            this[`${i.propertyKey}`] = function (...args: Array<unknown>) {
+                                original(...args);
+                            };
+                        }
+                    });
+                }
+
                 private TTool_Generate_Hooks() {
                     onMounted(() => {
                         this.TTool_Generate_CreateListen();
+                        this.TTool_Generate_Interval();
                     });
 
                     onUnmounted(() => {
                         this.TTool_Generate_UnMountRange();
                         this.TTool_Generate_UnMountLength();
                         this.TTool_Generate_UnMountWatch();
+                        this.TTool_Generate_UnMountInterval();
                         this.TTool_Generate_DestroyListen();
                     });
                 }
@@ -214,6 +299,12 @@ namespace TTool {
                 private TTool_Generate_UnMountWatch() {
                     for (let StopHandle of this.tTool_Generate_Watch) {
                         StopHandle();
+                    }
+                }
+
+                private TTool_Generate_UnMountInterval() {
+                    for (let i of this.tTool_Generate_Interval) {
+                        clearInterval(i);
                     }
                 }
 
@@ -422,6 +513,43 @@ namespace TTool {
             } else {
                 //@ts-ignore
                 target['tTool_Watch_Need'] = [{ Callback, deep, immediate, propertyKey }];
+            }
+        };
+    }
+
+    /**
+     * 重复执行函数 必须是返回 Promise 的函数签名
+     */
+    export function Retry<T extends Entity>(
+        retryCount: number | ((instance: T) => number),
+        retryDelay: number | ((instance: T) => number),
+        PassRetryCondition: (data: Record<string, unknown> | undefined | any) => boolean
+    ) {
+        return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+            //@ts-ignore
+            if (target['tTool_Retry_Need']) {
+                //@ts-ignore
+                target['tTool_Retry_Need'].push({ retryCount, retryDelay, PassRetryCondition, propertyKey });
+            } else {
+                //@ts-ignore
+                target['tTool_Retry_Need'] = [{ retryCount, retryDelay, PassRetryCondition, propertyKey }];
+            }
+        };
+    }
+
+    /**
+     * 自动间隔时间重复执行 Manager 在构造函数完成的下一次事件循环执行 Component 在 onMounted 后的下一次事件循环执行
+     * condition 是否执行的条件 time 每次执行间隔
+     */
+    export function Interval<T extends Entity>(condition: boolean | ((instance: T) => boolean), time: number | ((instance: T) => number)) {
+        return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+            //@ts-ignore
+            if (target['tTool_Interval_Need']) {
+                //@ts-ignore
+                target['tTool_Interval_Need'].push({ propertyKey, condition, time });
+            } else {
+                //@ts-ignore
+                target['tTool_Interval_Need'] = [{ propertyKey, condition, time }];
             }
         };
     }
