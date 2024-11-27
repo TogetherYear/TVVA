@@ -75,7 +75,7 @@ namespace TEvent {
                                 const bindEvent = this[`${e.funcName}`].bind(this);
                                 this.tEvent_Generate_OtherEvents.set(e.eventName, bindEvent);
                                 //@ts-ignore
-                                t.addEventListener(e.eventName, bindEvent);
+                                t.addEventListener(e.eventName, bindEvent, { once: e.once });
                             }
                         }
                     });
