@@ -128,7 +128,7 @@ namespace TTool {
                     const retry = (this['tTool_Retry_Need'] || []) as Array<{
                         retryCount: number | ((instance: Object) => number);
                         retryDelay: number | ((instance: Object) => number);
-                        PassRetryCondition: (data: Record<string, unknown>) => boolean;
+                        PassRetryCondition: (instance: Object, data: Record<string, unknown>) => boolean | Promise<boolean>;
                         propertyKey: string;
                     }>;
 
@@ -153,11 +153,11 @@ namespace TTool {
                                 const count = typeof r.retryCount === 'function' ? r.retryCount(this) : r.retryCount;
                                 for (let i = 0; i < count; ++i) {
                                     const result = await temp(...args);
-                                    if (i === count - 1 || r.PassRetryCondition(result.data)) {
+                                    if (i === count - 1 || (await r.PassRetryCondition(this, result.data))) {
                                         result.type === 'Success' ? resolve(result.data) : reject(result.data);
                                         break;
                                     }
-                                    if (result.type === 'Success' && r.PassRetryCondition(result.data)) {
+                                    if (result.type === 'Success' && (await r.PassRetryCondition(this, result.data))) {
                                         resolve(result.data);
                                         break;
                                     }
@@ -523,7 +523,7 @@ namespace TTool {
     export function Retry<T extends Entity>(
         retryCount: number | ((instance: T) => number),
         retryDelay: number | ((instance: T) => number),
-        PassRetryCondition: (data: Record<string, unknown> | undefined | any) => boolean
+        PassRetryCondition: (instance: T, data: Record<string, unknown> | undefined | any) => boolean | Promise<boolean>
     ) {
         return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
             //@ts-ignore

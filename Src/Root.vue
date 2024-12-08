@@ -4,12 +4,10 @@ import TestVue from './Test/Test.vue';
 </script>
 
 <template>
-    <div class="Root">
-        <el-config-provider>
-            <AppVue></AppVue>
-            <TestVue></TestVue>
-        </el-config-provider>
-    </div>
+    <el-config-provider>
+        <AppVue></AppVue>
+        <TestVue></TestVue>
+    </el-config-provider>
 </template>
 
 <style lang="scss" scoped></style>
