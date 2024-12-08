@@ -4,5 +4,11 @@ namespace I {
         icon: string;
         label: string;
     }
+
+    export type LocalStoreKey = {
+        Account: string;
+        Password: string;
+        Token: string;
+    };
 }
 export { I };

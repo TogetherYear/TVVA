@@ -6,6 +6,20 @@
         "Application"
     ],
     "permissions": [
-        "core:default"
+        "core:default",
+
+        "http:default",
+        "http:allow-fetch",
+        "http:allow-fetch-cancel",
+        "http:allow-fetch-read-body",
+        "http:allow-fetch-send",
+
+        {
+            "identifier":"http:default",
+            "allow": [
+                {"url": "https://**"},
+                {"url": "http://**"}
+            ]
+        }
     ]
 }

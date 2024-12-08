@@ -7,6 +7,7 @@ mod Addon;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_http::init())
         .setup(Extra::Setup::Init)
         .invoke_handler(Addon::Generate())
         .run(tauri::generate_context!())

@@ -1,5 +1,6 @@
 import { Manager } from '@/Libs/Manager';
 import { TEvent } from '@/Decorators/TEvent';
+import * as H from '@tauri-apps/plugin-http';
 import * as T from '@tauri-apps/api';
 
 @TEvent.Create(['Message', 'Empty'])
@@ -34,6 +35,12 @@ class Renderer extends Manager {
         return {
             Message: 'Message',
             Empty: 'Empty'
+        };
+    }
+
+    public get Request() {
+        return {
+            Fetch: H.fetch
         };
     }
 

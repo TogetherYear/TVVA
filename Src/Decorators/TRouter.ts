@@ -144,7 +144,20 @@ namespace TRouter {
      */
     let isLoad = false;
 
-    export function BeforeRouteHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {}
+    export const requestAbort: Array<AbortController> = [];
+
+    export function BeforeRouteHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
+        RequestCancelHandler();
+    }
+
+    function RequestCancelHandler() {
+        for (let ra of requestAbort) {
+            if (!ra.signal.aborted) {
+                ra.abort();
+            }
+        }
+        requestAbort.splice(0, requestAbort.length);
+    }
 
     export function AfterRouteHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
         HistoryAndQueryHandler(to, from);
