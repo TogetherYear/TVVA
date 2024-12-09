@@ -14,9 +14,9 @@ class AppRequest extends Manager {
     }
 
     /**
-     * 这里放不需要重复请求接口的 code  ( 其实一般除了 401 没有权限需要重新请求 其他基本都不需要 但还是把这里做个中间层 )
+     * 这里放需要重复请求接口的 code
      */
-    private passCode = [0, 400, 404, 500];
+    private passCode: Array<number> = [];
 
     /**
      * 这里放不需要加 Token 的接口 参数不需要加上
@@ -44,7 +44,7 @@ class AppRequest extends Manager {
                 return true;
             }
         }
-        if (this.passCode.indexOf(e.code) !== -1) {
+        if (this.passCode.indexOf(e.code) === -1) {
             return true;
         }
         return false;
