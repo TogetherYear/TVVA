@@ -7,7 +7,7 @@ namespace TTest {
     /**
      * 函数列表
      */
-    export const functionMap = ref<Map<string, { label: string; scope: Object; funcName: string; args: Array<unknown> }>>(new Map());
+    export const functionMap = ref<Map<string, { label: string; scope: Entity; funcName: string; args: Array<unknown> }>>(new Map());
 
     /**
      * 属性列表
@@ -113,8 +113,8 @@ namespace TTest {
     /**
      * 绑定测试函数 ...args 为需要传递的参数列表 如果需要传递类中变量 需要使用 函数 此函数只有一个参数 为 当前类实例 我会自动给你
      */
-    export function BindFunction(label: string, ...args: Array<unknown>) {
-        return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+    export function BindFunction<T extends Entity>(label: string, ...args: Array<unknown>) {
+        return function (target: T, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
             //@ts-ignore
             if (target['tTest_Bind_Function']) {
                 //@ts-ignore
@@ -139,8 +139,8 @@ namespace TTest {
     /**
      * 绑定测试属性 只接受 ref 和 reactive 定义的
      */
-    export function BindProperty(label: string) {
-        return function (target: Object, propertyKey: string | symbol) {
+    export function BindProperty<T extends Entity>(label: string) {
+        return function (target: T, propertyKey: string | symbol) {
             //@ts-ignore
             if (target['tTest_Bind_Property']) {
                 //@ts-ignore
@@ -160,7 +160,7 @@ namespace TTest {
         };
     }
 
-    export function EmitTest(e: { label: string; scope: Object; funcName: string; args: Array<unknown> }) {
+    export function EmitTest<T extends Entity>(e: { label: string; scope: T; funcName: string; args: Array<unknown> }) {
         const r = toRaw(e);
         const args = r.args.map((a) => {
             if (typeof a === 'function') {

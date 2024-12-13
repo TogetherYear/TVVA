@@ -204,8 +204,9 @@ namespace TRouter {
 
                 private TRouter_Generate_EmitFrom() {
                     //@ts-ignore
-                    const from = (this['tRouter_From_NeedCreate'] || []) as Array<{ funcName: string; from: string | ((instance: Object) => string) }>;
+                    const from = (this['tRouter_From_NeedCreate'] || []) as Array<{ funcName: string; from: string | ((instance: T) => string) }>;
                     for (let f of from) {
+                        //@ts-ignore
                         if (lastPath.value.indexOf(typeof f.from === 'function' ? f.from(this) : f.from) !== -1) {
                             //@ts-ignore
                             this[`${f.funcName}`]();
@@ -215,8 +216,9 @@ namespace TRouter {
 
                 private TRouter_Generate_EmitTo() {
                     //@ts-ignore
-                    const to = (this['tRouter_To_NeedCreate'] || []) as Array<{ funcName: string; to: string | ((instance: Object) => string) }>;
+                    const to = (this['tRouter_To_NeedCreate'] || []) as Array<{ funcName: string; to: string | ((instance: T) => string) }>;
                     for (let t of to) {
+                        //@ts-ignore
                         if (currentPath.value.indexOf(typeof t.to === 'function' ? t.to(this) : t.to) !== -1) {
                             //@ts-ignore
                             this[`${t.funcName}`]();
@@ -239,7 +241,7 @@ namespace TRouter {
      * 如果从 from 路由进来 会触发的函数 我会进行匹配 只要传入参数被包含在路由中 触发函数不支持传参 ( from 为 '/' 即只要进来就会触发)
      */
     export function WhenFrom<T extends Component>(from: string | ((instance: T) => string)) {
-        return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+        return function (target: T, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
             //@ts-ignore
             if (target['tRouter_From_NeedCreate']) {
                 //@ts-ignore
@@ -263,7 +265,7 @@ namespace TRouter {
      * 如果进入 to 路由 会触发的函数 我会进行匹配 只要传入参数被包含在路由中 触发函数不支持传参 ( To 为 '/' 即只要离开就会触发)
      */
     export function WhenTo<T extends Component>(to: string | ((instance: T) => string)) {
-        return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+        return function (target: T, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
             //@ts-ignore
             if (target['tRouter_To_NeedCreate']) {
                 //@ts-ignore
