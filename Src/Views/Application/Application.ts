@@ -13,9 +13,9 @@ class Application extends Component {
     }
 
     public Run() {
-        onMounted(async () => {});
+        onMounted(() => {});
 
-        onUnmounted(async () => {
+        onUnmounted(() => {
             this.Destroy();
         });
     }
