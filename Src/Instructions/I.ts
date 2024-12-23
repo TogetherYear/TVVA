@@ -10,11 +10,5 @@ namespace I {
         Password: string;
         Token: string;
     };
-    export namespace Theme {
-        export const enum Style {
-            Dark = 'Dark',
-            Light = 'Light'
-        }
-    }
 }
 export { I };

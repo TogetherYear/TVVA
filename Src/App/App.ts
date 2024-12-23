@@ -11,7 +11,7 @@ class App extends Manager {
     public InitHooks() {}
 
     public Run() {
-        Theme.LoadTheme(I.Theme.Style.Dark);
+        Theme.LoadTheme('Dark');
         onMounted(() => {});
 
         onUnmounted(() => {
