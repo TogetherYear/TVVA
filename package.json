@@ -10,24 +10,24 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@tauri-apps/api": "^2.0.2",
-        "@tauri-apps/plugin-http": "^2.0.1",
-        "element-plus": "^2.8.4",
-        "vue": "^3.5.11",
-        "vue-router": "^4.4.5"
+        "@tauri-apps/api": "^2.1.1",
+        "@tauri-apps/plugin-http": "^2.2.0",
+        "element-plus": "^2.9.1",
+        "vue": "^3.5.13",
+        "vue-router": "^4.5.0"
     },
     "devDependencies": {
-        "@tauri-apps/cli": "^2.0.2",
-        "@types/node": "^20.14.2",
-        "@vitejs/plugin-vue": "^5.1.4",
-        "eruda": "^3.4.0",
-        "prettier": "^3.3.3",
-        "sass": "^1.79.4",
-        "typescript": "^5.6.2",
-        "unplugin-auto-import": "^0.18.3",
+        "@tauri-apps/cli": "^2.1.0",
+        "@types/node": "^22.10.2",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "eruda": "^3.4.1",
+        "prettier": "^3.4.2",
+        "sass": "1.79.4",
+        "typescript": "^5.7.2",
+        "unplugin-auto-import": "^0.19.0",
         "unplugin-element-plus": "^0.8.0",
-        "unplugin-vue-components": "^0.27.4",
-        "vite": "^5.4.8",
-        "vue-tsc": "^2.1.6"
+        "unplugin-vue-components": "^0.28.0",
+        "vite": "^6.0.5",
+        "vue-tsc": "^2.2.0"
     }
 }
