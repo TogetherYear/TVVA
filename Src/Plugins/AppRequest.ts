@@ -118,7 +118,7 @@ class AppRequest extends Manager {
         return false;
     }
 
-    private async RefreshToken() {
+    private RefreshToken() {
         return new Promise((resolve, reject) => {
             if (!this.refreshing) {
                 /**
