@@ -100,7 +100,7 @@ namespace TEvent {
                             const t = typeof e.listenTarget === 'function' ? e.listenTarget(this) : e.listenTarget;
                             if (t.hasOwnProperty('unique_Id')) {
                                 //@ts-ignore
-                                t.RemoveListen(e.eventName, this, e.funcName);
+                                t.RemoveListen(e.eventName, this);
                             } else {
                                 const bindEvent = this.tEvent_Generate_OtherEvents.get(e.eventName)!;
                                 //@ts-ignore
