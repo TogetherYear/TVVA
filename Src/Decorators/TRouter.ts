@@ -151,12 +151,14 @@ namespace TRouter {
     }
 
     function RequestCancelHandler() {
-        for (let ra of requestAbort) {
-            if (!ra.signal.aborted) {
-                ra.abort();
+        if (isLoad) {
+            for (let ra of requestAbort) {
+                if (!ra.signal.aborted) {
+                    ra.abort();
+                }
             }
+            requestAbort.splice(0, requestAbort.length);
         }
-        requestAbort.splice(0, requestAbort.length);
     }
 
     export function AfterRouteHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
