@@ -2,7 +2,7 @@ import { Manager } from '@/Libs/Manager';
 import { TEvent } from '@/Decorators/TEvent';
 import * as T from '@tauri-apps/api';
 
-@TEvent.Create(['Message', 'Empty'])
+@TEvent.Create(['Empty'])
 class Renderer extends Manager {
     public get App() {
         return {
@@ -32,7 +32,6 @@ class Renderer extends Manager {
 
     public get RendererEvent() {
         return {
-            Message: 'Message',
             Empty: 'Empty'
         };
     }
@@ -47,7 +46,6 @@ class Renderer extends Manager {
             if (r.event === this.RendererEvent.Empty) {
                 this.Emit(this.RendererEvent.Empty, r);
             }
-            this.Emit(this.RendererEvent.Message, r);
         });
     }
 }
