@@ -8,8 +8,8 @@ import E from 'eruda';
 
 E.init({ tool: ['console', 'elements'] });
 
-// import { Renderer } from './Plugins/Renderer';
+import { Renderer } from './Plugins/Renderer';
 
-// await Renderer.Run();
+await Renderer.Run();
 
 createApp(RootVue).use(router).mount('#App');

@@ -3,7 +3,7 @@ import { TTool } from '@/Decorators/TTool';
 import { Manager } from '@/Libs/Manager';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { LocalStore } from './LocalStore';
-import { ElMessage } from 'element-plus';
+import { showNotify } from 'vant';
 import { ToLogin } from '@/Demands/Login';
 
 /**
@@ -76,8 +76,8 @@ class AppRequest extends Manager {
                     return response;
                 } else {
                     if (this.passMessage.indexOf(response.data.code) === -1) {
-                        ElMessage({
-                            type: 'error',
+                        showNotify({
+                            type: 'danger',
                             message: response.data.msg
                         });
                     }
