@@ -14,8 +14,7 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["Src/*"]
-        },
-        "types": ["element-plus/global"]
+        }
     },
     "include": ["Src/**/*.ts", "Src/**/*.d.ts", "Src/**/*.tsx", "Src/**/*.vue"]
 }
