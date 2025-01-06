@@ -34,3 +34,7 @@ storeFile=C:\\Users\\admin\\upload-keystore.jks
 ```
 包安装不下来 网上都有解决方法 不在说明 基本都是手动下载 在放入指定文件夹即可
 ```
+
+```
+全局搜 TSingleton 我有些地方做了修改
+```

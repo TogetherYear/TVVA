@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- FIXME:设置自定义颜色 -->
+    <!-- TSingleton:设置自定义颜色 -->
     <color name="statusBarColor">#FF212121</color>
     <color name="navigationBarColor">#FF212121</color>
 </resources>
