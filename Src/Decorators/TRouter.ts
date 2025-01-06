@@ -1,12 +1,12 @@
 import { Component } from '@/Libs/Component';
 import { onMounted, onUnmounted, reactive, ref } from 'vue';
-import { RouteLocationNormalizedGeneric, RouteRecordNormalized, RouteRecordRaw } from 'vue-router';
+import { RouteLocationNormalizedGeneric, RouteRecordRaw } from 'vue-router';
 
 namespace TRouter {
     /**
      * 路由菜单
      */
-    export const routes: Array<RouteRecordRaw & { meta?: TRouteMeta }> = [
+    export const routes: Array<RouteRecordRaw & { meta?: ViewMeta }> = [
         {
             path: '/',
             name: 'Default',
@@ -21,10 +21,8 @@ namespace TRouter {
             path: '/Empty',
             name: 'Empty',
             meta: {
-                module: TRouter.Module.None,
-                duty: TRouter.Duty.None,
-                menuName: '',
-                menuLabel: '',
+                menuName: '404',
+                menuLabel: '404',
                 menuIcon: '',
                 visibility: false
             },
@@ -34,10 +32,8 @@ namespace TRouter {
             path: '/Application',
             name: 'Application',
             meta: {
-                module: TRouter.Module.Default,
-                duty: TRouter.Duty.Application,
-                menuName: '',
-                menuLabel: '',
+                menuName: '应用',
+                menuLabel: '应用',
                 menuIcon: '',
                 visibility: true
             },
@@ -46,30 +42,6 @@ namespace TRouter {
     ];
 
     //#region 模块
-
-    /**
-     * 最外层所属模块
-     */
-    export const enum Module {
-        None,
-        Default
-    }
-
-    /**
-     * 职责
-     */
-    export const enum Duty {
-        None,
-        Application
-    }
-
-    /**
-     * 页面
-     */
-    export type View = {
-        module: Module;
-        duty: Duty;
-    };
 
     export type ViewMeta = {
         /**
@@ -90,30 +62,10 @@ namespace TRouter {
         visibility: boolean;
     };
 
-    export type TRouteMeta = View & ViewMeta;
-
     /**
-     * 当前活动页面
+     * 当前活动页面 自己后续增加层级
      */
-    export const activeView = reactive<View>({ module: Module.None, duty: Duty.None });
-
-    /**
-     * 系统菜单
-     */
-    export const menu = ref<Map<Module, Array<TRouteMeta & { path: string }>>>(new Map());
-
-    export function InitMenu(rs: Array<RouteRecordNormalized & { meta: TRouteMeta | {} }>) {
-        for (let r of rs) {
-            if (Object.keys(r.meta).length !== 0) {
-                const meta = r.meta as TRouteMeta;
-                let children = menu.value.get(meta.module);
-                if (!children) {
-                    children = menu.value.set(meta.module, []).get(meta.module);
-                }
-                children!.push({ ...meta, path: r.path });
-            }
-        }
-    }
+    export const activeView = reactive<{ _1: string; _2: string; _3: string }>({ _1: '', _2: '', _3: '' });
 
     //#endregion
 
@@ -165,7 +117,7 @@ namespace TRouter {
         HistoryAndQueryHandler(to, from);
     }
 
-    export function HistoryAndQueryHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
+    function HistoryAndQueryHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
         lastPath.value = from.path;
         currentPath.value = to.path;
         const index = routeHistory.value.findIndex((r) => r.path === to.path);
@@ -174,9 +126,12 @@ namespace TRouter {
         }
         routeHistory.value.push({ path: to.path, query: { ...to.query } as Record<string, string> });
         if (Object.keys(to.meta).length !== 0) {
-            const current = to.meta as TRouteMeta;
-            activeView.module = current.module;
-            activeView.duty = current.duty;
+            //@ts-ignore
+            activeView._1 = to.matched[0]?.meta.menuName;
+            //@ts-ignore
+            activeView._2 = to.matched[1]?.meta.menuName;
+            //@ts-ignore
+            activeView._3 = to.matched[2]?.meta.menuName;
         }
         currentQuery = { ...to.query };
     }

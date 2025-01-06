@@ -14,6 +14,4 @@ router.afterEach((to, from) => {
     TRouter.AfterRouteHandler(to, from);
 });
 
-TRouter.InitMenu(router.getRoutes());
-
 export { router };
