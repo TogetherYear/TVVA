@@ -36,5 +36,5 @@ storeFile=C:\\Users\\admin\\upload-keystore.jks
 ```
 
 ```
-全局搜 TSingleton 我有些地方做了修改
+全局搜 FIXME 我有些地方做了修改
 ```
