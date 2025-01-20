@@ -30,7 +30,6 @@ namespace TEvent {
                     super(...args);
                     this.tEvent_Generate_Type = type;
                     this.tEvent_Generate_IsFinish = true;
-                    this.TEvent_Generate_ListenEvents();
                     if (this.tEvent_Generate_Type === Lifecycle.Global) {
                         this.TEvent_Generate_Global_Hooks();
                     } else {
@@ -82,10 +81,14 @@ namespace TEvent {
                     });
                 }
 
-                private TEvent_Generate_Global_Hooks() {}
+                private TEvent_Generate_Global_Hooks() {
+                    this.TEvent_Generate_ListenEvents();
+                }
 
                 private TEvent_Generate_Temporary_Hooks() {
-                    onMounted(() => {});
+                    onMounted(() => {
+                        this.TEvent_Generate_ListenEvents();
+                    });
 
                     onBeforeUnmount(() => {
                         //@ts-ignore
