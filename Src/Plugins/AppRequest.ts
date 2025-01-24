@@ -5,6 +5,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { LocalStore } from './LocalStore';
 import { showNotify } from 'vant';
 import { ToLogin } from '@/Demands/Login';
+import adapter from 'axios-tauri-api-adapter';
 
 /**
  * Axios请求
@@ -42,7 +43,8 @@ class AppRequest extends Manager {
         this.request = axios.create({
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            adapter: adapter
         });
         this.SetRequest();
         this.SetResponse();
