@@ -13,7 +13,7 @@ import { Entity } from './Entity';
 @TRouter.Generate()
 @TEvent.Generate(TEvent.Lifecycle.Temporary)
 @TComponent.Generate()
-class Component<T extends Component<T> | null = null> extends Entity {
+class Component<T extends Entity | null = null> extends Entity {
     public constructor(parent: T | null = null) {
         super();
         this.parent = parent;
