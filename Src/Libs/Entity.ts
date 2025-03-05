@@ -39,10 +39,22 @@ class Entity extends EventSystem {
     /**
      * 根据条件获取 Component
      */
-    public GetComponent<T extends Component>(Condition: (instance: T) => boolean): T | null {
+    public GetComponentByCondition<T extends Component>(Condition: (instance: T) => boolean): T | null {
         for (let c of TComponent.components) {
             if (Condition(c as T)) {
                 return c as T;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据类获取 Component
+     */
+    public GetComponentByClass<T extends Component, K extends typeof Component<T>>(component: K): InstanceType<K> | null {
+        for (let c of TComponent.components) {
+            if (c.constructor === component) {
+                return c as InstanceType<K>;
             }
         }
         return null;
