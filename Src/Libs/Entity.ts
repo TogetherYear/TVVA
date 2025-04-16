@@ -51,25 +51,45 @@ class Entity extends EventSystem {
     /**
      * 根据条件获取 Component
      */
-    public GetComponentByCondition<T extends Component>(Condition: (instance: T) => boolean): T | null {
-        for (let c of TComponent.components) {
-            if (Condition(c as T)) {
-                return c as T;
+    public GetComponentByCondition<T extends Component>(Condition: (instance: T) => boolean, first = true): T | Array<T> | null {
+        if (first) {
+            for (let c of TComponent.components) {
+                if (Condition(c as T)) {
+                    return c as T;
+                }
             }
+            return null;
+        } else {
+            const target: Array<T> = [];
+            for (let c of TComponent.components) {
+                if (Condition(c as T)) {
+                    target.push(c as T);
+                }
+            }
+            return target;
         }
-        return null;
     }
 
     /**
      * 根据类获取 Component
      */
-    public GetComponentByClass<T extends Component, K extends typeof Component<T>>(component: K): InstanceType<K> | null {
-        for (let c of TComponent.components) {
-            if (c.constructor === component) {
-                return c as InstanceType<K>;
+    public GetComponentByClass<T extends Component, K extends typeof Component<T>>(component: K, first = true): InstanceType<K> | Array<InstanceType<K>> | null {
+        if (first) {
+            for (let c of TComponent.components) {
+                if (c.constructor === component) {
+                    return c as InstanceType<K>;
+                }
             }
+            return null;
+        } else {
+            const target: Array<InstanceType<K>> = [];
+            for (let c of TComponent.components) {
+                if (c.constructor === component) {
+                    target.push(c as InstanceType<K>);
+                }
+            }
+            return target;
         }
-        return null;
     }
 }
 
