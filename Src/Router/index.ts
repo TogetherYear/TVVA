@@ -7,7 +7,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, form) => {
-    TRouter.BeforeRouteHandler(to, form);
+    return TRouter.BeforeRouteHandler(to, form);
 });
 
 router.afterEach((to, from) => {

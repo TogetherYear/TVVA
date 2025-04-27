@@ -104,11 +104,12 @@ namespace TRouter {
     export const requestAbort: Array<AbortController> = [];
 
     export function BeforeRouteHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
-        RequestCancelHandler();
+        RequestCancelHandler(to, from);
+        return true;
     }
 
-    function RequestCancelHandler() {
-        if (isLoad && !isFirstPush) {
+    function RequestCancelHandler(to: RouteLocationNormalizedGeneric, from: RouteLocationNormalizedGeneric) {
+        if (isLoad && !isFirstPush && to.path !== from.path) {
             for (let ra of requestAbort) {
                 if (!ra.signal.aborted) {
                     ra.abort();
